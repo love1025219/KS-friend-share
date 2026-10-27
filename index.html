@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>KS多元化派車｜推薦好友</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background: #fff1f5;
+      color: #49323b;
+      text-align: center;
+    }
+    .card {
+      max-width: 440px;
+      margin: 60px auto;
+      padding: 32px 22px;
+      background: white;
+      border-radius: 22px;
+      box-shadow: 0 8px 30px #e7b7c655;
+    }
+    h1 { color: #dc5683; font-size: 27px; }
+    p { line-height: 1.8; }
+    button, .join {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    button { background: #06c755; color: white; }
+    button:disabled { background: #aaa; }
+    .join { background: #ffe0ea; color: #bd3766; }
+    #status { font-size: 13px; color: #777; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>🚗 KS多元化派車</h1>
+    <h2>💗 推薦好友一起加入</h2>
+    <p>叫車、跑腿、代駕更方便！</p>
+    <p>分享給親朋好友，一起享受便利服務。</p>
+
+    <button id="shareBtn" disabled>
+      分享給 LINE 好友
+    </button>
+
+    <a class="join"
+       href="https://lin.ee/PGX3gPC">
+      加入 KS 官方帳號
+    </a>
+
+    <p id="status">正在準備分享功能...</p>
+  </main>
+
+  <script>
+    // 建立 LIFF 後，將下面文字換成 LIFF ID
+    const LIFF_ID = "PASTE_YOUR_LIFF_ID_HERE";
+    const JOIN_URL = "https://lin.ee/PGX3gPC";
+
+    const button = document.getElementById("shareBtn");
+    const status = document.getElementById("status");
+
+    async function initialize() {
+      if (LIFF_ID === "PASTE_YOUR_LIFF_ID_HERE") {
+        status.textContent = "尚未設定 LIFF ID";
+        return;
+      }
+
+      try {
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isApiAvailable("shareTargetPicker")) {
+          status.textContent = "目前環境不支援好友分享";
+          return;
+        }
+
+        button.disabled = false;
+        status.textContent = "已準備好，可以分享給好友！";
+      } catch (error) {
+        status.textContent = "初始化失敗，請確認 LIFF 設定";
+        console.error(error);
+      }
+    }
+
+    button.addEventListener("click", async () => {
+      try {
+        await liff.shareTargetPicker([
+          {
+            type: "text",
+            text:
+              "🚗 KS多元化派車\n\n" +
+              "推薦你加入我們的 LINE 官方帳號！\n" +
+              "叫車、跑腿、代駕更方便 ❤️\n\n" +
+              "👇 點擊加入\n" + JOIN_URL
+          }
+        ], { isMultiple: true });
+      } catch (error) {
+        alert("分享未完成，請稍後再試。");
+        console.error(error);
+      }
+    });
+
+    initialize();
+  </script>
+</body>
+</html>
